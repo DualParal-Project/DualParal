@@ -8,12 +8,27 @@
 <a  href="https://dualparal-project.github.io/dualparal.github.io/"><img src="https://img.shields.io/badge/ProjectPage-DualParal-376ED2#376ED2.svg"></a>
 </div>
 
-## TL;DR (Too Long; Didn't Read)
+## 📚 TL;DR (Too Long; Didn't Read)
 **DualParal** is a distributed inference strategy for Diffusion Transformers (DiT)-based video diffusion models. It achieves high efficiency by parallelizing both temporal frames and model layers with the help of *block-wise denoising scheme*.
-Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) and
-[project page](https://dualparal-project.github.io/dualparal.github.io/) for more information and generated videos.
+Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) for more information.
 
-## Setup
+## 🎥 Demo--more video samples in our [project page](https://dualparal-project.github.io/dualparal.github.io/)!
+<div style="display: flex; gap: 10px;">
+    <div style="text-align: center;">
+        <img src="assets/gif1.gif" style="width: 100%; height: 200px; object-fit: cover;"/>
+        <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
+            A white-suited astronaut with a gold visor spins in dark space, tethered by a drifting cable. Stars twinkle around him as Earth glows blue in the distance. His suit reflects faint starlight against the vastness of the cosmos.
+        </p>
+    </div>
+    <div style="text-align: center;">
+        <img src="assets/gif2.gif" style="width: 100%; height: 200px; object-fit: cover;"/>
+        <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
+            A flock of birds glides through the warm sunset sky, wings outstretched. Their feathers catch golden light as they soar above silhouetted treetops, with the sky glowing in soft hues of amber and pink.
+        </p>
+    </div>
+</div>
+
+## 🛠️ Setup
 ```
 conda create -n DualParal python=3.10
 conda activate DualParal
@@ -22,7 +37,7 @@ pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https
 pip install -r requirements.txt
 ```
 
-## Usage
+## 🚀 Usage
 ### **Quick Start —— DualParal on multiple GPUs with Wan2.1-1.3B (480p)**
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
@@ -70,10 +85,10 @@ python -m examples.Wan-Video.py
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.1-T2V-14B-Diffusers --height 720 --width 1280 --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
 ```
 
-## Acknowledgements
+## ☀️ Acknowledgements
 Our project is based on the [Wan2.1](https://github.com/Wan-Video/Wan2.1) model. We would like to thank the authors for their excellent work! ❤️
 
-## Citation
+## 🔗 Citation
 ```
 @misc{wang2025minutelongvideosdualparallelisms,
       title={Minute-Long Videos with Dual Parallelisms}, 
