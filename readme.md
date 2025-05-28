@@ -13,19 +13,15 @@
 Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) for more information.
 
 ## 🎥 Demo--more video samples in our [project page](https://dualparal-project.github.io/dualparal.github.io/)!
-<div style="display: flex; gap: 10px;">
-    <div style="text-align: center;">
-        <img src="assets/gif1.gif" style="width: 100%; height: 200px; object-fit: cover;"/>
-        <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
-            A white-suited astronaut with a gold visor spins in dark space, tethered by a drifting cable. Stars twinkle around him as Earth glows blue in the distance. His suit reflects faint starlight against the vastness of the cosmos.
-        </p>
-    </div>
-    <div style="text-align: center;">
-        <img src="assets/gif2.gif" style="width: 100%; height: 200px; object-fit: cover;"/>
-        <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
-            A flock of birds glides through the warm sunset sky, wings outstretched. Their feathers catch golden light as they soar above silhouetted treetops, with the sky glowing in soft hues of amber and pink.
-        </p>
-    </div>
+<div align="center">
+    <img src="assets/gif1.gif" style="width: 416px; height: 240px; object-fit: cover;"/>
+    <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
+        A white-suited astronaut with a gold visor spins in dark space, tethered by a drifting cable. Stars twinkle around him as Earth glows blue in the distance. His suit reflects faint starlight against the vastness of the cosmos.
+    </p>
+    <img src="assets/gif2.gif" style="width: 416px; height: 240px; object-fit: cover;"/>
+    <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
+        A flock of birds glides through the warm sunset sky, wings outstretched. Their feathers catch golden light as they soar above silhouetted treetops, with the sky glowing in soft hues of amber and pink.
+    </p>
 </div>
 
 ## 🛠️ Setup
