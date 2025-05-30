@@ -88,7 +88,7 @@ Our project is based on the [Wan2.1](https://github.com/Wan-Video/Wan2.1) model.
 ```
 @misc{wang2025minutelongvideosdualparallelisms,
       title={Minute-Long Videos with Dual Parallelisms}, 
-      author={Zeqing Wang and Bowen Zheng and Xingyi Yang and Yuecong Xu and Xinchao Wang},
+      author={Zeqing Wang and Bowen Zheng and Xingyi Yang and Zhenxiong Tan and Yuecong Xu and Xinchao Wang},
       year={2025},
       eprint={2505.21070},
       archivePrefix={arXiv},
