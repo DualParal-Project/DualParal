@@ -73,7 +73,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --sample_steps 50 
 ### Further experiments
 - **Original Wan implementation with single GPU**
 ```bash
-python -m examples.Wan-Video.py 
+python -m examples.Wan-Video
 ```
 
 - **DualParal on multiple GPUs with Wan2.1-14B (720p)**
