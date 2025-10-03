@@ -42,7 +42,7 @@ def batch_generate_video(model_id, prompt):
     vae = AutoencoderKLWan.from_pretrained(model_id, subfolder="vae", torch_dtype=dtype)
     scheduler = UniPCMultistepScheduler.from_pretrained(model_id, subfolder="scheduler", flow_shift=sample_shift)
     pipe = WanPipeline.from_pretrained(model_id, vae=vae, scheduler=scheduler, boundary_ratio=boundary_ratio, torch_dtype=dtype)
-
+    # print(pipe.transformer2)
     ### Inference
     pipe = pipe.to("cuda")
     output = pipe(
@@ -57,8 +57,8 @@ def batch_generate_video(model_id, prompt):
     ).frames[0]
     export_to_video(output, "output.mp4", fps=sample_fps)
 
-model_id = "Wan-AI/Wan2.1-T2V-14B-Diffusers"
+# model_id = "Wan-AI/Wan2.1-T2V-14B-Diffusers"
 # model_id = "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
-# model_id = "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
+model_id = "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
 prompt = "A cat and a dog baking a cake together in a kitchen. The cat is carefully measuring flour, while the dog is stirring the batter with a wooden spoon. The kitchen is cozy, with sunlight streaming through the window."
 batch_generate_video(model_id, prompt)

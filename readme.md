@@ -24,6 +24,10 @@ Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) for more inform
     </p>
 </div>
 
+## 🔥 News!!
+- 3 Oct, 2025: 👋 We've combined DualParal with the [Wan2.2-T2V-A14B](https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B-Diffusers) model.
+- 27 May, 2025: 👋 We've released the DualParal code, which combines with the [Wan2.1-T2V-1.3B](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B-Diffusers) and [Wan2.1-T2V-14B](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B-Diffusers).
+
 ## 🛠️ Setup
 ```
 conda create -n DualParal python=3.10
@@ -34,9 +38,9 @@ pip install -r requirements.txt
 ```
 
 ## 🚀 Usage
-### **Quick Start —— DualParal on multiple GPUs with Wan2.1-1.3B (480p)**
+### **Quick Start**
 ```bash
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.1-T2V-1.3B-Diffusers --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
 ```
 
 ### **Major parameters**
@@ -54,12 +58,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --sample_steps 50 
 
 | Parameter   | Description                            |
 | ----------- | -------------------------------------- |
-| `model_id`   | Model Id for Wan-2.1 Video (Wan-AI/Wan2.1-T2V-1.3B-Diffusers, or Wan-AI/Wan2.1-T2V-14B-Diffusers).      |
+| `model_id`   | Model Id for Wan-2.1 (Wan-AI/Wan2.1-T2V-1.3B-Diffusers, or Wan-AI/Wan2.1-T2V-14B-Diffusers) and Wan2.2(Wan-AI/Wan2.1-T2V-14B-Diffusers).      |
 | `height` | Height of generating videos. |
 | `width` | Width of generating videos. |
 | `sample_steps` | The sampling steps. |
-| `sample_shift` | Sampling shift factor for flow matching schedulers. |
+| `flow_shift` | Sampling shift factor for flow matching schedulers. |
 | `sample_guide_scale` | Classifier free guidance scale. |
+| `sample_guide_scale2` | Classifier free guidance scale for the second model in Wan2.2. |
+|`boundary_ratio`| Boundary ratio for Wan2.2.|
 
 - **Major Args for DualParal**
 
@@ -76,13 +82,17 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --sample_steps 50 
 python -m examples.Wan-Video
 ```
 
-- **DualParal on multiple GPUs with Wan2.1-14B (720p)**
+- **DualParal**
 ```bash
+# For Wan2.1-14B
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.1-T2V-14B-Diffusers --height 720 --width 1280 --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
+
+# For Wan2.2-A14B
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.2-T2V-A14B-Diffusers --height 720 --width 1280 --sample_steps 50 --sample_guide_scale 4.0 --sample_guide_scale2 3.0 --boundary_ratio 0.875 --flow_shift 12.0 --num_per_block 8 --latents_num 40 --num_cat 8
 ```
 
 ## ☀️ Acknowledgements
-Our project is based on the [Wan2.1](https://github.com/Wan-Video/Wan2.1) model. We would like to thank the authors for their excellent work! ❤️
+Our project is based on the [Wan](https://github.com/Wan-Video/Wan2.1) model. We would like to thank the authors for their excellent work! ❤️
 
 ## 🔗 Citation
 ```

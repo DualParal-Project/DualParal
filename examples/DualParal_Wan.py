@@ -48,10 +48,14 @@ def _parse_args():
         help="Width of generating videos")
     parser.add_argument("--sample_steps", type=int, default=50, 
         help="The sampling steps.")
-    parser.add_argument("--sample_shift", type=float, default=None,
+    parser.add_argument("--flow_shift", type=float, default=None,
         help="Sampling shift factor for flow matching schedulers.")
     parser.add_argument("--sample_guide_scale", type=float, default=5.0,
         help="Classifier free guidance scale.")
+    parser.add_argument("--sample_guide_scale2", type=float, default=None,
+        help="Classifier free guidance scale2 for Wan2.2.")
+    parser.add_argument("--boundary_ratio", type=float, default=None,
+        help="Boundary_ratio for Wan2.2")
     parser.add_argument("--prompt", type=str, default="A cat and a dog baking a cake together in a kitchen. The cat is carefully measuring flour, while the dog is stirring the batter with a wooden spoon. The kitchen is cozy, with sunlight streaming through the window.",
         help="The prompt to generate the image or video from.")
     
@@ -69,9 +73,9 @@ def _parse_args():
 def prepare_model(args, parallel_config, runtime_config):
     model_id = args.model_id
     vae = AutoencoderKLWan.from_pretrained(model_id, subfolder="vae", torch_dtype=torch.float32)
-    flow_shift = 3.0 # 5.0 for 720P, 3.0 for 480P
+    flow_shift = args.flow_shift # 5.0 for 720P, 3.0 for 480P
     scheduler = UniPCMultistepScheduler.from_pretrained(model_id, subfolder="scheduler", flow_shift=flow_shift)
-    model = WanPipeline.from_pretrained(model_id, vae=vae, scheduler=scheduler, torch_dtype=runtime_config.dtype)
+    model = WanPipeline.from_pretrained(model_id, vae=vae, scheduler=scheduler, boundary_ratio=args.boundary_ratio, torch_dtype=runtime_config.dtype)
 
     Pipe = DualParalWanPipeline(model, parallel_config, runtime_config)
     Pipe.to_device(device=parallel_config.device, dtype=runtime_config.dtype, non_blocking=True)
@@ -110,6 +114,8 @@ def main(args, rank, world_size):
         num_inference_steps=args.sample_steps,
         negative_prompt=negative_prompt,
         guidance_scale=args.sample_guide_scale,
+        guidance_scale_2=args.sample_guide_scale2,
+        boundary_ratio=args.boundary_ratio,
     )
     timesteps = Pipe.timesteps
     latent_size = (args.num_per_block, args.height, args.width)

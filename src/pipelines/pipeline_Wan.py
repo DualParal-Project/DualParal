@@ -200,7 +200,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         self.tokenizer = model.tokenizer
         self.text_encoder = model.text_encoder
         self.transformer = model.transformer.blocks # Only Dit Blocks 
-        self.transformer2 = model.transformer2.blocks if hasattr(model, 'transformer2') else None
+        self.transformer_2 = model.transformer_2.blocks if hasattr(model, 'transformer_2') else None
         self.vae = model.vae
         self.scheduler = model.scheduler
         self.scheduler_dict = {}
@@ -229,13 +229,13 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
             block.attn2.set_processor(DualParal_WanAttnProcessor())
             self.transformer[idx] = DualParal_WanTransformerBlock(block)
 
-        if self.transformer2 is not None:
-            del self.model.transformer2.blocks
-            self.model.transformer2.blocks = self.transformer2
-            for idx, block in enumerate(self.transformer2):
+        if self.transformer_2 is not None:
+            del self.model.transformer_2.blocks
+            self.model.transformer_2.blocks = self.transformer_2
+            for idx, block in enumerate(self.transformer_2):
                 block.attn1.set_processor(DualParal_WanAttnProcessor())
                 block.attn2.set_processor(DualParal_WanAttnProcessor())
-                self.transformer2[idx] = DualParal_WanTransformerBlock(block)
+                self.transformer_2[idx] = DualParal_WanTransformerBlock(block)
     
     @torch.no_grad()  
     def onestep(self, 
@@ -253,8 +253,9 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
 
         current_model = self.model.transformer
         guidance_scale = self.guidance_scale
-        if self.boundary_timestep is not None and t>=self.boundary_timestep:
-            current_model = self.model.transformer2
+        if self.boundary_timestep is not None and t<self.boundary_timestep:
+            print("YES Change!!!!!")
+            current_model = self.model.transformer_2
             guidance_scale = self.guidance_scale_2
 
         if verbose: print(f"[{self.parallel_config.device}] latents size {latent_size}, with cache {len(self.cache)}, with latent_num {latent_num}, with select_all {select_all}, with select {select}, with time {time.time()-start_time}")
@@ -335,6 +336,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         num_inference_steps: int = 50,
         guidance_scale: float = 5.0,
         guidance_scale_2: Optional[float] = None,
+        boundary_ratio: Optional[float] = None,
         num_videos_per_prompt: Optional[int] = 1,
         generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
         latents: Optional[torch.Tensor] = None,
@@ -346,6 +348,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
     ):
         device, dtype = self.parallel_config.device, self.runtime_config.dtype
         self.guidance_scale = guidance_scale
+        self.guidance_scale_2 = guidance_scale_2 
 
         # 1. Get Prompt Embedding
         if prompt is not None and isinstance(prompt, str):
@@ -385,8 +388,8 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         self.timesteps = self.scheduler.timesteps
 
         # 3. Boundary Condition
-        if self.model.config.boundary_ratio is not None:
-            self.boundary_timestep = self.model.config.boundary_ratio * self.scheduler.config.num_train_timesteps
+        if boundary_ratio is not None:
+            self.boundary_timestep = boundary_ratio * self.scheduler.config.num_train_timesteps
         else:
             self.boundary_timestep = None
 

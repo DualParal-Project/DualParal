@@ -116,17 +116,17 @@ class DualParalPipelineBaseWrapper(object):
         self.transformer_ = self.transformer[range_of_blocks.start:range_of_blocks.stop]
         del self.transformer
 
-        if self.transformer2 is not None:
-            range_of_blocks = self._get_blocks_range(self.transformer2)
-            self.transformer2_ = self.transformer2[range_of_blocks.start:range_of_blocks.stop]
-            del self.transformer2
+        if self.transformer_2 is not None:
+            range_of_blocks = self._get_blocks_range(self.transformer_2)
+            self.transformer_2_ = self.transformer_2[range_of_blocks.start:range_of_blocks.stop]
+            del self.transformer_2
         else:
-            self.transformer2_ = None
+            self.transformer_2_ = None
 
         self.transformer = self.transformer_
-        self.transformer2 = self.transformer2_
+        self.transformer_2 = self.transformer_2_
         del self.transformer_
-        del self.transformer2_
+        del self.transformer_2_
         
     def forward(self):
         pass
