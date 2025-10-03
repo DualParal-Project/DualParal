@@ -88,12 +88,12 @@ class DualParalPipelineBaseWrapper(object):
     ):
         self.runtime_config = runtime_config
         self.parallel_config = parallel_config
-
-    def _split_transformer_backbone(self):
+    
+    def _get_blocks_range(self, transformer):
         world_size = self.parallel_config.world_size
         local_rank = self.parallel_config.rank
 
-        lenth_of_blocks = len(self.transformer)
+        lenth_of_blocks = len(transformer)
         lenth_of_blocks_per_device = lenth_of_blocks//world_size
         mod_of_blocks_per_device = lenth_of_blocks%world_size
         range_of_block = {}
@@ -108,13 +108,25 @@ class DualParalPipelineBaseWrapper(object):
         start_range, final_range = range_of_block[local_rank][0], range_of_block[local_rank][1]
         if self.parallel_config.rank==self.parallel_config.world_size-1:
             final_range = lenth_of_blocks
-        range_of_blocks = range(
-                    start_range, final_range
-                )
+        range_of_blocks = range(start_range, final_range)
+        return range_of_blocks
+
+    def _split_transformer_backbone(self):
+        range_of_blocks = self._get_blocks_range(self.transformer)
         self.transformer_ = self.transformer[range_of_blocks.start:range_of_blocks.stop]
         del self.transformer
+
+        if self.transformer2 is not None:
+            range_of_blocks = self._get_blocks_range(self.transformer2)
+            self.transformer2_ = self.transformer2[range_of_blocks.start:range_of_blocks.stop]
+            del self.transformer2
+        else:
+            self.transformer2_ = None
+
         self.transformer = self.transformer_
+        self.transformer2 = self.transformer2_
         del self.transformer_
+        del self.transformer2_
         
     def forward(self):
         pass

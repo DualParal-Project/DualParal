@@ -221,12 +221,21 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
 
         self.pretransformer, self.finaltransformer = pretransformer, finaltransformer
         self._split_transformer_backbone()
+
         del self.model.transformer.blocks
         self.model.transformer.blocks = self.transformer
         for idx, block in enumerate(self.transformer):
             block.attn1.set_processor(DualParal_WanAttnProcessor())
             block.attn2.set_processor(DualParal_WanAttnProcessor())
             self.transformer[idx] = DualParal_WanTransformerBlock(block)
+
+        if self.transformer2 is not None:
+            del self.model.transformer2.blocks
+            self.model.transformer2.blocks = self.transformer2
+            for idx, block in enumerate(self.transformer2):
+                block.attn1.set_processor(DualParal_WanAttnProcessor())
+                block.attn2.set_processor(DualParal_WanAttnProcessor())
+                self.transformer2[idx] = DualParal_WanTransformerBlock(block)
     
     @torch.no_grad()  
     def onestep(self, 
@@ -242,6 +251,12 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         i = blocklatents.denoise_time
         z, t = blocklatents.z, self.timesteps[i]
 
+        current_model = self.model.transformer
+        guidance_scale = self.guidance_scale
+        if self.boundary_timestep is not None and t>=self.boundary_timestep:
+            current_model = self.model.transformer2
+            guidance_scale = self.guidance_scale_2
+
         if verbose: print(f"[{self.parallel_config.device}] latents size {latent_size}, with cache {len(self.cache)}, with latent_num {latent_num}, with select_all {select_all}, with select {select}, with time {time.time()-start_time}")
         t = t.expand(1)
         t = torch.cat([t, t], 0)
@@ -249,12 +264,12 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
 
         latent_size = torch.Size([2] + list(latent_size)[1:])
         batch_size, num_channels, num_frames, height, width = latent_size
-        p_t, p_h, p_w = self.model.transformer.config.patch_size
+        p_t, p_h, p_w = current_model.config.patch_size
         post_patch_num_frames = num_frames // p_t
         post_patch_height = height // p_h
         post_patch_width = width // p_w
         self.tmp = torch.empty(*latent_size).to(self.parallel_config.device, self.runtime_config.dtype)
-        rotary_emb_1 = self.model.transformer.rope(self.tmp)
+        rotary_emb_1 = current_model.rope(self.tmp)
 
         if len(self.cache)>0:
             # for position
@@ -262,11 +277,10 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
             latent_size = torch.Size([batch_size, num_channels, num_frames, height, width])
         
         self.tmp = torch.empty(*latent_size).to(self.parallel_config.device, self.runtime_config.dtype)
-        rotary_emb_2 = self.model.transformer.rope(self.tmp)
-        # print(rotary_emb_1)
+        rotary_emb_2 = current_model.rope(self.tmp)
         rotary_emb = (rotary_emb_1, rotary_emb_2)
 
-        temb, timestep_proj, encoder_hidden_states, encoder_hidden_states_image = self.model.transformer.condition_embedder(
+        temb, timestep_proj, encoder_hidden_states, encoder_hidden_states_image = current_model.condition_embedder(
             t, self.encoder_hidden_states, self.encoder_hidden_states_image
         )
         timestep_proj = timestep_proj.unflatten(1, (6, -1))
@@ -277,12 +291,12 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
      
         if self.pretransformer:
             z = torch.cat([z, z], 0) 
-            z = self.model.transformer.patch_embedding(z)
+            z = current_model.patch_embedding(z)
             z = z.flatten(2).transpose(1, 2)
 
         hidden_states = z.contiguous()
         use_cache_ = (len(self.cache) > 0)
-        for now_idx, block in enumerate(self.transformer):
+        for now_idx, block in enumerate(current_model.blocks):
             cache = None if not use_cache_ else self.cache[now_idx]
             size_tmp = hidden_states.size()
             hidden_states, cache = block(hidden_states, encoder_hidden_states, timestep_proj, rotary_emb, cache=cache,\
@@ -293,12 +307,12 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
                 self.cache[now_idx] = cache
 
         if self.finaltransformer:
-            shift, scale = (self.model.transformer.scale_shift_table + temb.unsqueeze(1)).chunk(2, dim=1)
+            shift, scale = (current_model.scale_shift_table + temb.unsqueeze(1)).chunk(2, dim=1)
             shift = shift.to(hidden_states.device)
             scale = scale.to(hidden_states.device)
             hidden_states = hidden_states.contiguous()
-            hidden_states = (self.model.transformer.norm_out(hidden_states.float()) * (1 + scale) + shift).type_as(hidden_states)
-            hidden_states = self.model.transformer.proj_out(hidden_states)
+            hidden_states = (current_model.norm_out(hidden_states.float()) * (1 + scale) + shift).type_as(hidden_states)
+            hidden_states = current_model.proj_out(hidden_states)
             hidden_states = hidden_states.reshape(
                 batch_size, post_patch_num_frames, post_patch_height, post_patch_width, p_t, p_h, p_w, -1
             )
@@ -306,7 +320,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
             noise_pred = hidden_states.flatten(6, 7).flatten(4, 5).flatten(2, 3)
             noise_pred = noise_pred
             noise_pred, noise_uncond = noise_pred[0], noise_pred[1]
-            noise_pred = noise_uncond + self.guidance_scale * (noise_pred - noise_uncond)
+            noise_pred = noise_uncond + guidance_scale * (noise_pred - noise_uncond)
             noise_pred = noise_pred.unsqueeze(0)
             if verbose: print(f"[{self.parallel_config.device}] Final (use cache {use_cache_}) tiem {time.time()-start_time:.6f}s")
             return noise_pred
@@ -369,6 +383,13 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         # 2. Prepare Timesteps
         self.scheduler.set_timesteps(num_inference_steps, device=device)
         self.timesteps = self.scheduler.timesteps
+
+        # 3. Boundary Condition
+        if self.model.config.boundary_ratio is not None:
+            self.boundary_timestep = self.model.config.boundary_ratio * self.scheduler.config.num_train_timesteps
+        else:
+            self.boundary_timestep = None
+
 
     def to_device(self, device, dtype, **kwargs):
         self.model = self.model.to(device, dtype, **kwargs) if self.model is not None else None
