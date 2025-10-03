@@ -40,7 +40,9 @@ pip install -r requirements.txt
 ## 🚀 Usage
 ### **Quick Start**
 ```bash
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.1-T2V-1.3B-Diffusers --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan \
+    --model_id Wan-AI/Wan2.1-T2V-1.3B-Diffusers \
+    --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
 ```
 
 ### **Major parameters**
@@ -85,10 +87,17 @@ python -m examples.Wan-Video
 - **DualParal**
 ```bash
 # For Wan2.1-14B
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.1-T2V-14B-Diffusers --height 720 --width 1280 --sample_steps 50 --num_per_block 8 --latents_num 40 --num_cat 8
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan \
+    --model_id Wan-AI/Wan2.1-T2V-14B-Diffusers \
+    --height 720 --width 1280 --sample_steps 50 \
+    --num_per_block 8 --latents_num 40 --num_cat 8
 
 # For Wan2.2-A14B
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan --model_id Wan-AI/Wan2.2-T2V-A14B-Diffusers --height 720 --width 1280 --sample_steps 50 --sample_guide_scale 4.0 --sample_guide_scale2 3.0 --boundary_ratio 0.875 --flow_shift 12.0 --num_per_block 8 --latents_num 40 --num_cat 8
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m examples.DualParal_Wan \
+    --model_id Wan-AI/Wan2.2-T2V-A14B-Diffusers \
+    --height 720 --width 1280 --sample_steps 50 --sample_guide_scale 4.0 \
+    --sample_guide_scale2 3.0 --boundary_ratio 0.875 --flow_shift 12.0 \
+    --num_per_block 8 --latents_num 40 --num_cat 8
 ```
 
 ## ☀️ Acknowledgements

@@ -254,7 +254,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         current_model = self.model.transformer
         guidance_scale = self.guidance_scale
         if self.boundary_timestep is not None and t<self.boundary_timestep:
-            print("YES Change!!!!!")
+            # print("YES Change!!!!!")
             current_model = self.model.transformer_2
             guidance_scale = self.guidance_scale_2
 
