@@ -200,7 +200,7 @@ class DualParalWanPipeline(DualParalPipelineBaseWrapper):
         self.tokenizer = model.tokenizer
         self.text_encoder = model.text_encoder
         self.transformer = model.transformer.blocks # Only Dit Blocks 
-        self.transformer_2 = model.transformer_2.blocks if hasattr(model, 'transformer_2') else None
+        self.transformer_2 = model.transformer_2.blocks if hasattr(model, 'transformer_2') and model.transformer_2 is not None else None
         self.vae = model.vae
         self.scheduler = model.scheduler
         self.scheduler_dict = {}

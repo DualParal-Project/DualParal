@@ -48,7 +48,7 @@ def _parse_args():
         help="Width of generating videos")
     parser.add_argument("--sample_steps", type=int, default=50, 
         help="The sampling steps.")
-    parser.add_argument("--flow_shift", type=float, default=None,
+    parser.add_argument("--flow_shift", type=float, default=3.0,
         help="Sampling shift factor for flow matching schedulers.")
     parser.add_argument("--sample_guide_scale", type=float, default=5.0,
         help="Classifier free guidance scale.")
