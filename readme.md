@@ -5,14 +5,14 @@
 <!-- <img src='./assets/DualParal.png' width='80%' /> -->
 <br>
 <a href="https://arxiv.org/abs/2505.21070"><img src="https://img.shields.io/badge/ariXv-2505.21070-A42C25.svg" alt="arXiv"></a>
-<a  href="https://dualparal-project.github.io/dualparal.github.io/"><img src="https://img.shields.io/badge/ProjectPage-DualParal-376ED2#376ED2.svg"></a>
+<a  href="https://dualparal-project.github.io/"><img src="https://img.shields.io/badge/ProjectPage-DualParal-376ED2#376ED2.svg"></a>
 </div>
 
 ## 📚 TL;DR (Too Long; Didn't Read)
 **DualParal** is a distributed inference strategy for Diffusion Transformers (DiT)-based video diffusion models. It achieves high efficiency by parallelizing both temporal frames and model layers with the help of *block-wise denoising scheme*.
 Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) for more information.
 
-## 🎥 Demo--more video samples in our [project page](https://dualparal-project.github.io/dualparal.github.io/)!
+## 🎥 Demo--more video samples in our [project page](https://dualparal-project.github.io/)!
 <div align="center">
     <img src="assets/gif1.gif" style="width: 416px; height: 240px; object-fit: cover;"/>
     <p style="text-align: justify; font-size: 10px; line-height: 1.2; margin: 5px 0;">
