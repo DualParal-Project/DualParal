@@ -25,6 +25,7 @@ Feel free to visit our [paper](https://arxiv.org/abs/2505.21070) for more inform
 </div>
 
 ## 🔥 News!!
+- 8 Nov, 2025: 🎉 Our paper is accepted by AAAI 2026!
 - 3 Oct, 2025: 👋 We've combined DualParal with the [Wan2.2-T2V-A14B](https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B-Diffusers) model.
 - 27 May, 2025: 👋 We've released the DualParal code, which combines with the [Wan2.1-T2V-1.3B](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B-Diffusers) and [Wan2.1-T2V-14B](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B-Diffusers).
 
