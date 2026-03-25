@@ -106,13 +106,12 @@ Our project is based on the [Wan](https://github.com/Wan-Video/Wan2.1) model. We
 
 ## 🔗 Citation
 ```
-@misc{wang2025minutelongvideosdualparallelisms,
-      title={Minute-Long Videos with Dual Parallelisms}, 
-      author={Zeqing Wang and Bowen Zheng and Xingyi Yang and Zhenxiong Tan and Yuecong Xu and Xinchao Wang},
-      year={2025},
-      eprint={2505.21070},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2505.21070}, 
+@article{Wang_Zheng_Yang_Tan_Xu_Wang_2026,
+    author={Wang, Zeqing and Zheng, Bowen and Yang, Xingyi and Tan, Zhenxiong and Xu, Yuecong and Wang, Xinchao},
+    title={Minute-Long Videos with Dual Parallelisms},
+    journal={Proceedings of the AAAI Conference on Artificial Intelligence},
+    year={2026},
+    month={Mar.},
+    pages={10358-10366}
 }
 ```
